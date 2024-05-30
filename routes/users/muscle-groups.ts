@@ -1,5 +1,5 @@
 const {authenticateJWT} = require('../../modules/authenticateJWT');
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 const addMuscleGroup = require('../../controllers/exercises/muscle-groups');
 

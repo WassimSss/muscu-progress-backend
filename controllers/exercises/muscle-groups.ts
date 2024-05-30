@@ -15,14 +15,17 @@ const add =  async (req : Request, res: Response) => {
   const idUser = req.user?.id;
 
   // Check if the user exists 
-  checkData({idUser : idUser}, res)
+  if(checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)){
+    return;
+  }
 
   const name = req.body.name;
 
-  checkData({name: name}, res)
+   if(checkData({name: name}, res, "Le nom de l'exercice est requis", false)){
+    return;
+  }
 
   const newMuscleGroup = new MuscleGroup({
-    
     name: name,  
   });
 
