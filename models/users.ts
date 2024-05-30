@@ -9,7 +9,7 @@ interface IUser extends Document {
   gender?: 'Male' | 'Female' ;
   weights: Schema.Types.ObjectId[];
   dailyCalories: Schema.Types.ObjectId[];
-  exercises: Schema.Types.ObjectId[];
+  workouts: Schema.Types.ObjectId[];
   roles: string[];
 }
 
@@ -22,7 +22,7 @@ const userSchema = new Schema<IUser>({
   gender: { type: String, enum: ['Male', 'Female'] },
   weights: [{ type: Schema.Types.ObjectId, ref: 'Weight' }],
   dailyCalories: [{ type: Schema.Types.ObjectId, ref: 'DailyCalorie' }],
-  exercises: [{ type: Schema.Types.ObjectId, ref: 'Exercise' }],
+  workouts: [{ type: Schema.Types.ObjectId, ref: 'WorkoutExercise' }],
   roles: [{ type: String }]
 }, { timestamps: true });
 

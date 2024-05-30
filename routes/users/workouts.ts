@@ -1,7 +1,7 @@
 const {authenticateJWT} = require('../../modules/authenticateJWT');
-import express from 'express';
+const express = require('express');
 const router = express.Router();
-const add = require('../../controllers/users/exercises');
+const add = require('../../controllers/users/workouts');
 
 router.post('/add', authenticateJWT, add);
 

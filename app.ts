@@ -10,6 +10,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var exercisesRouter = require('./routes/users/exercises');
 var muscleGroupsRouter = require('./routes/users/muscle-groups');
+var workoutsRouter = require('./routes/users/workouts');
 
 
 var app = express();
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users/exercises', exercisesRouter);
 app.use('/users/muscle-groups', muscleGroupsRouter);
+app.use('/users/workouts', workoutsRouter);
 
 
 
