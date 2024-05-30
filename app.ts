@@ -7,19 +7,25 @@ var logger = require('morgan');
 
 
 // var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index');
+var exercisesRouter = require('./routes/users/exercises');
+var muscleGroupsRouter = require('./routes/users/muscle-groups');
+
 
 var app = express();
 
-const number : string = "123";
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/', indexRouter);
+app.use('/users/exercises', exercisesRouter);
+app.use('/users/muscle-groups', muscleGroupsRouter);
 
-console.log("yes")
+
+
 module.exports = app;
+
+
