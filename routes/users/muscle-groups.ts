@@ -1,9 +1,11 @@
 const {authenticateJWT} = require('../../modules/authenticateJWT');
 import express from 'express';
 const router = express.Router();
-const addMuscleGroup = require('../../controllers/users/muscle-groups');
+const {add, get} = require('../../controllers/users/muscle-groups');
 
-router.post('/add', authenticateJWT, addMuscleGroup);
+router.post('/add', authenticateJWT, add);
+
+router.get('/get', authenticateJWT, get)
 
 
 

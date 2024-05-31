@@ -13,6 +13,7 @@ var indexRouter = require('./routes/index');
 var exercisesRouter = require('./routes/users/exercises');
 var muscleGroupsRouter = require('./routes/users/muscle-groups');
 var workoutsRouter = require('./routes/users/workouts');
+var apiRouter = require('./routes/api');
 
 
 var app = express();
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/api', apiRouter);
 app.use('/users/exercises', exercisesRouter);
 app.use('/users/muscle-groups', muscleGroupsRouter);
 app.use('/users/workouts', workoutsRouter);

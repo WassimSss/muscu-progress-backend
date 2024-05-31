@@ -68,8 +68,32 @@ const add =  async (req : Request, res: Response) => {
 
   }
 }
+
+const get = async (req: Request, res: Response) => {
+  const idUser = req.user?.id;
+
+  // Check if the user exists 
+  if(checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)){
+    return;
+  }
+
+  const idMuscleGroup = req.params.idMuscleGroup
+
+  // Check if the muscle group is provided
+  if(checkData({idMuscleGroup: idMuscleGroup}, res, "L'identifiant du groupe musculaire est requis", false)){
+    return;
+  }
+
+  const exercises = await Exercise.find({ muscleGroup: idMuscleGroup });
+
+  return res.json({
+    result: true,
+    message: 'Exercices trouvés',
+    exercises: exercises
+  });
+}
 	
 
 
-module.exports =  add ;
+module.exports =  {add, get} ;
 export {}

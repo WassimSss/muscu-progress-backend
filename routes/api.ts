@@ -1,19 +1,18 @@
 // routes/auth.routes.js
-const jwt = require('jsonwebtoken');
+import { Request, Response, Router } from 'express';
+import jwt from 'jsonwebtoken';
 
-// const { authenticateJWT } = require('../modules/authenticateJWT');
-
-// router.get('/check-auth', authenticateJWT);
+const router = Router();
 
 router.get('/check-auth', (req: Request, res: Response) => {
-	const token = req.headers.authorization.split(' ')[1]; // Supposant que le token est envoyé sous la forme "Bearer <token>"
+	const token = req.headers.authorization?.split(' ')[1]; // Supposant que le token est envoyé sous la forme "Bearer <token>"
 
 	try {
 		if (!token) {
 			return res.status(401).json({ isAuthenticated: false, message: 'Aucun token fourni' });
 		}
 
-		const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+		const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY) as { [key: string]: any };
 
 		if (decoded) {
 			return res.status(201).json({ isAuthenticated: true });
