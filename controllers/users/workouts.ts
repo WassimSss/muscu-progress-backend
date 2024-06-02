@@ -31,9 +31,9 @@ const add =  async (req : Request, res: Response) => {
   }
 
   // Check if the weight is provided
-  if(checkData({weight: weight}, res, "Le poids est requis", false)){
-    return;
-  }
+  // if(checkData({weight: weight}, res, "Le poids est requis", false)){
+  //   return;
+  // }
 
   // Check if the repetitions is provided
   if(checkData({repetitions: repetitions}, res, "Le nombre de répétitions est requis", false)){

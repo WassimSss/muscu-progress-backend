@@ -5,7 +5,7 @@ const {add, get} = require('../../controllers/users/workouts');
 
 router.post('/add', authenticateJWT, add);
 
-router.post('/get', authenticateJWT, get);
+router.get('/get', authenticateJWT, get);
 
 
 
