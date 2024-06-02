@@ -22,4 +22,8 @@ const workoutExerciseSchema = new Schema<IWorkoutExercise>({
   date: { type: Date, default: Date.now }
 });
 
-export const WorkoutExercise = model<IWorkoutExercise>('WorkoutExercise', workoutExerciseSchema);
+const WorkoutExercise = model<IWorkoutExercise>('WorkoutExercise', workoutExerciseSchema);
+
+export { WorkoutExercise, IWorkoutExercise };
+
+

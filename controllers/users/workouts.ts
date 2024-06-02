@@ -47,7 +47,6 @@ const add =  async (req : Request, res: Response) => {
 
   // Check if the workout exists
   const workout = await WorkoutExercise.findOne({user: idUser, muscleGroup: idMuscleGroup, name: idExercise, date: {$gte: startOfDay, $lte: endOfDay}});
-
   // If the workout exists, add the new set to the workout
   if(workout){
 
@@ -89,14 +88,14 @@ const add =  async (req : Request, res: Response) => {
   }
 }
 
-const get =  async (req : Request, res: Response) => {
+const get = async (req: Request, res: Response) => {
   const idUser = req.user?.id;
+
   // Check if the user exists 
-  if(checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)){
+  if (checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)) {
     return;
   }
 
-  const today = moment().utcOffset(0, true);
   const startOfDay = moment().utcOffset(0, true).startOf('day').toDate();
   const endOfDay = moment().utcOffset(0, true).endOf('day').toDate();
 
@@ -115,7 +114,7 @@ const get =  async (req : Request, res: Response) => {
     { $unwind: '$workoutDetails' },
     {
       $lookup: {
-        from: 'musclegroups', // Nom de la collection MuscleGroup
+        from: 'musclegroups',
         localField: 'workoutDetails.muscleGroup',
         foreignField: '_id',
         as: 'muscleGroupDetails'
@@ -124,41 +123,56 @@ const get =  async (req : Request, res: Response) => {
     { $unwind: '$muscleGroupDetails' },
     {
       $lookup: {
-        from: 'exercises', // Nom de la collection Exercise
+        from: 'exercises',
         localField: 'workoutDetails.name',
         foreignField: '_id',
         as: 'exerciseDetails'
       }
     },
     { $unwind: '$exerciseDetails' },
+    { $unwind: '$workoutDetails.sets' }, // Unwind sets to get individual sets
     {
       $project: {
         _id: 0,
-        workoutDetails: 1,
-        muscleGroup: '$muscleGroupDetails.name', // Nom du groupe musculaire
-        exerciseName: '$exerciseDetails.name', // Nom de l'exercice
-
+        muscleGroup: '$muscleGroupDetails.name',
+        exerciseName: '$exerciseDetails.name',
+        weight: '$workoutDetails.sets.weight',
+        reps: '$workoutDetails.sets.repetitions'
       }
     },
-    
-  ])
+  ]);
+
+  // Structure the results
+  const groupedWorkouts = workouts.reduce((acc, workout) => {
+    const { muscleGroup, exerciseName, weight, reps } = workout;
+
+    let muscleGroupEntry = acc.find(group => group.muscleGroup === muscleGroup);
+
+    if (!muscleGroupEntry) {
+      muscleGroupEntry = { muscleGroup, exercises: [] };
+      acc.push(muscleGroupEntry);
+    }
+
+    let exerciseEntry = muscleGroupEntry.exercises.find(exercise => exercise.name === exerciseName);
+
+    if (!exerciseEntry) {
+      exerciseEntry = { name: exerciseName, sets: [] };
+      muscleGroupEntry.exercises.push(exerciseEntry);
+    }
+
+    exerciseEntry.sets.push({ weight, reps });
+
+    return acc;
+  }, []);
 
   return res.json({
     result: true,
-    workouts: workouts
+    workouts: groupedWorkouts
   });
-
-  // const workouts = await User.findOne({_id: idUser}).populate('workouts.workout');
-
+};
 
 
-  
 
-  console.log(workouts)
-
- 
-  
-}
 	
 
 
