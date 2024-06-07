@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IUser, User } from '../../models/users';
 import { checkData } from '../../modules/checkData';
 import { WorkoutExercise } from '../../models/workoutExercises';
+import { MuscleGroup } from '../../models/muscleGroups';
 const moment = require('moment');
 const mongoose = require('mongoose');
 declare module 'express' {
@@ -131,20 +132,32 @@ const get = async (req: Request, res: Response) => {
     },
     { $unwind: '$exerciseDetails' },
     { $unwind: '$workoutDetails.sets' }, // Unwind sets to get individual sets
+    // {
+    //   $project: {
+    //     _id: 0,
+    //     muscleGroup: '$muscleGroupDetails.name',
+    //     exerciseName: '$exerciseDetails.name',
+    //     weight: '$workoutDetails.sets.weight',
+    //     reps: '$workoutDetails.sets.repetitions',
+    //     setId: '$workoutDetails.sets._id', // Include set ID
+    //   }
+    // },
     {
       $project: {
         _id: 0,
         muscleGroup: '$muscleGroupDetails.name',
         exerciseName: '$exerciseDetails.name',
         weight: '$workoutDetails.sets.weight',
-        reps: '$workoutDetails.sets.repetitions'
+        reps: '$workoutDetails.sets.repetitions',
+        idSet: '$workoutDetails.sets._id', // Include workout ID
+        
       }
-    },
+    }
   ]);
 
   // Structure the results
   const groupedWorkouts = workouts.reduce((acc, workout) => {
-    const { muscleGroup, exerciseName, weight, reps } = workout;
+    const { muscleGroup, exerciseName, weight, reps, idSet } = workout;
 
     let muscleGroupEntry = acc.find(group => group.muscleGroup === muscleGroup);
 
@@ -160,7 +173,7 @@ const get = async (req: Request, res: Response) => {
       muscleGroupEntry.exercises.push(exerciseEntry);
     }
 
-    exerciseEntry.sets.push({ weight, reps });
+    exerciseEntry.sets.push({ weight, reps, idSet });
 
     return acc;
   }, []);
@@ -171,10 +184,52 @@ const get = async (req: Request, res: Response) => {
   });
 };
 
+const removeSet = async (req: Request, res: Response) => {
+  const idUser = req.user?.id;
+  const { idSet } = req.params;
+
+  // Check if the user exists 
+  if (checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)) {
+    return;
+  }
+
+  // Check if the idSet is provided
+  if (checkData({ idSet: idSet }, res, "L'id de la série est requis", false)) {
+    return;
+  }
+
+  const workout = await WorkoutExercise.findOne({ user: idUser, 'sets._id': idSet });
+
+  if (!workout) {
+    return res.json({
+      result: false,
+      message: 'Série non trouvée'
+    });
+  }
+
+  const deletedSet = await WorkoutExercise.deleteOne({ user: idUser, 'sets._id': idSet });
+
+  if(deletedSet.deletedCount > 0){
+return res.json({
+      result: true,
+      message: 'Série supprimée avec succès'
+    });
+  } else {
+    return res.json({
+      result: false,
+      message: 'Erreur'
+    })
+  }
+  
+
+    
+  // });
+}
+
 
 
 	
 
 
-module.exports =  {add, get} ;
+module.exports =  {add, get, removeSet} ;
 export {}

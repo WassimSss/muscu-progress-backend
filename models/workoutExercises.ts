@@ -5,6 +5,7 @@ interface IWorkoutExercise extends Document {
   muscleGroup: Schema.Types.ObjectId;
   name: Schema.Types.ObjectId; // Groupe musculaire
   sets: { // Séries
+    
     weight: number; // Poids en kg 
     repetitions: number; 
   }[];

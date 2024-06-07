@@ -32,6 +32,10 @@ const add =  async (req : Request, res: Response) => {
     return;
   }
 
+  if(checkData({idMuscleGroup: idMuscleGroup}, res, "Le groupe musculaire est requis", false)){
+    return;
+  }
+  
   const exerciseExists = await Exercise.findOne({
     name: name
   });
@@ -42,9 +46,7 @@ const add =  async (req : Request, res: Response) => {
   }
 
   // // Check if the muscle group is provided
-  if(checkData({idMuscleGroup: idMuscleGroup}, res, "Le groupe musculaire est requis", false)){
-    return;
-  }
+
 
   const newExercise = new Exercise({
     muscleGroup: idMuscleGroup,
