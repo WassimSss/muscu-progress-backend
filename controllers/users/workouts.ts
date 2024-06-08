@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { IUser, User } from '../../models/users';
 import { checkData } from '../../modules/checkData';
 import { WorkoutExercise } from '../../models/workoutExercises';
-import { MuscleGroup } from '../../models/muscleGroups';
 const moment = require('moment');
 const mongoose = require('mongoose');
 declare module 'express' {
@@ -226,10 +225,59 @@ const removeSet = async (req: Request, res: Response) => {
         });
 }
 
+const getWorkedDaysInMonth = async (req: Request, res: Response) => {
+  const idUser = req.user?.id;
+  
+  const { month, year } = req.params;
+
+  // Valider les entrées
+  if (!month || !year || isNaN(parseInt(month)) || isNaN(parseInt(year))) {
+    return res.status(400).json({
+      result: false,
+      message: 'Mois ou année invalide'
+    });
+  }
+
+  // Calculer le début et la fin du mois
+  const startOfMonth = moment().year(parseInt(year)).month(parseInt(month) - 1).startOf('month').toDate();
+  const endOfMonth = moment().year(parseInt(year)).month(parseInt(month) - 1).endOf('month').toDate();
+
+  try {
+    const user = await User.findById(idUser).select('workouts').lean();
+
+    if (!user) {
+      return res.status(404).json({
+        result: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Filtrer les workouts pour obtenir ceux du mois spécifié
+    const workoutsInMonth = user.workouts.filter(workout => {
+      return workout.date >= startOfMonth && workout.date <= endOfMonth;
+    });
+
+    // Extraire les dates uniques
+    const workedDays = Array.from(new Set(workoutsInMonth.map(workout => workout.date.toISOString().split('T')[0])));
+
+    return res.json({
+      result: true,
+      workedDays
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      result: false,
+      message: 'Erreur serveur'
+    });
+  }
+};
+
+
 
 
 	
 
 
-module.exports =  {add, get, removeSet} ;
+module.exports =  {add, get, removeSet, getWorkedDaysInMonth} ;
 export {}
