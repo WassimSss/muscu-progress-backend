@@ -207,23 +207,23 @@ const removeSet = async (req: Request, res: Response) => {
     });
   }
 
-  const deletedSet = await WorkoutExercise.deleteOne({ user: idUser, 'sets._id': idSet });
 
-  if(deletedSet.deletedCount > 0){
-return res.json({
-      result: true,
-      message: 'Série supprimée avec succès'
-    });
-  } else {
-    return res.json({
+  const deletedSet = await WorkoutExercise.updateOne(
+    { user: idUser, 'sets._id': idSet },
+    { $pull: { sets: { _id: idSet } } }
+  );
+
+  if (deletedSet.modifiedCount === 0) {
+    return res.status(404).json({
       result: false,
-      message: 'Erreur'
-    })
+      message: 'Set non trouvé ou déjà supprimé'
+    });
   }
-  
 
-    
-  // });
+  res.json({
+          result: true,
+          message: 'Série supprimée avec succès'
+        });
 }
 
 
