@@ -5,7 +5,7 @@ const {add, get, removeSet, getWorkedDaysInMonth} = require('../../controllers/u
 
 router.post('/add', authenticateJWT, add);
 
-router.get('/get', authenticateJWT, get);
+router.get('/get/:date', authenticateJWT, get);
 
 router.get('/get/worked-days/:month/:year', authenticateJWT, getWorkedDaysInMonth);
 

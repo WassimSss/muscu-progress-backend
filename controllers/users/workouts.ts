@@ -90,14 +90,20 @@ const add =  async (req : Request, res: Response) => {
 
 const get = async (req: Request, res: Response) => {
   const idUser = req.user?.id;
+  const { date } = req.params;
 
   // Check if the user exists 
-  if (checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)) {
-    return;
+  if (!idUser) {
+    return res.status(404).json({ result: false, message: 'Utilisateur non trouvé' });
   }
 
-  const startOfDay = moment().utcOffset(0, true).startOf('day').toDate();
-  const endOfDay = moment().utcOffset(0, true).endOf('day').toDate();
+  const parsedDate = moment(date, 'YYYY-MM-DD');
+  if (!parsedDate.isValid()) {
+    return res.status(400).json({ result: false, message: 'Date invalide' });
+  }
+
+  const startOfDay = parsedDate.startOf('day').toDate();
+  const endOfDay = parsedDate.endOf('day').toDate();
 
   const workouts = await User.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(idUser) } },
@@ -131,16 +137,6 @@ const get = async (req: Request, res: Response) => {
     },
     { $unwind: '$exerciseDetails' },
     { $unwind: '$workoutDetails.sets' }, // Unwind sets to get individual sets
-    // {
-    //   $project: {
-    //     _id: 0,
-    //     muscleGroup: '$muscleGroupDetails.name',
-    //     exerciseName: '$exerciseDetails.name',
-    //     weight: '$workoutDetails.sets.weight',
-    //     reps: '$workoutDetails.sets.repetitions',
-    //     setId: '$workoutDetails.sets._id', // Include set ID
-    //   }
-    // },
     {
       $project: {
         _id: 0,
@@ -149,7 +145,6 @@ const get = async (req: Request, res: Response) => {
         weight: '$workoutDetails.sets.weight',
         reps: '$workoutDetails.sets.repetitions',
         idSet: '$workoutDetails.sets._id', // Include workout ID
-        
       }
     }
   ]);
