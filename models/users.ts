@@ -5,6 +5,11 @@ interface WorkoutReference {
   workout: Schema.Types.ObjectId;
 }
 
+interface WeightReference {
+  date: Date;
+  weight: number
+}
+
 interface IUser extends Document {
   email: string;
   password: string;
@@ -12,11 +17,17 @@ interface IUser extends Document {
   age?: number;
   height?: number;
   gender?: 'Male' | 'Female' ;
-  weights: Schema.Types.ObjectId[];
   dailyCalories: Schema.Types.ObjectId[];
   workouts: WorkoutReference[];
+  weights: WeightReference[];
   roles: string[];
 }
+
+const weightReferenceSchema = new Schema<WeightReference>({
+  date: { type: Date, required: true },
+  weight: {type: Number, required: true}
+});
+
 
 const workoutReferenceSchema = new Schema<WorkoutReference>({
   date: { type: Date, required: true },
@@ -30,7 +41,7 @@ const userSchema = new Schema<IUser>({
   age: { type: Number },
   height: { type: Number },
   gender: { type: String, enum: ['Male', 'Female'] },
-  weights: [{ type: Schema.Types.ObjectId, ref: 'Weight' }],
+  weights: [weightReferenceSchema],
   dailyCalories: [{ type: Schema.Types.ObjectId, ref: 'DailyCalorie' }],
   workouts: [workoutReferenceSchema],
   roles: [{ type: String }]

@@ -3,7 +3,6 @@ import { IUser, User } from '../../models/users';
 import { checkData } from '../../modules/checkData';
 import { Exercise } from '../../models/exercises';
 import { checkAdmin } from '../../modules/checkAdmin';
-import { check } from 'express-validator';
 
 declare module 'express' {
     

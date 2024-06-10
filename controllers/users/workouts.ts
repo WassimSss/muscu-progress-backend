@@ -99,13 +99,13 @@ const get = async (req: Request, res: Response) => {
     return res.status(404).json({ result: false, message: 'Utilisateur non trouvé' });
   }
 
-  const parsedDate = moment(date, 'YYYY-MM-DD');
+  const parsedDate = moment(date, 'YYYY-MM-DD').utcOffset(0, true);
   if (!parsedDate.isValid()) {
     return res.status(400).json({ result: false, message: 'Date invalide' });
   }
 
-  const startOfDay = parsedDate.startOf('day').toDate();
-  const endOfDay = parsedDate.endOf('day').toDate();
+  const startOfDay = moment().utcOffset(0, true).startOf('day').toDate();
+  const endOfDay = moment().utcOffset(0, true).endOf('day').toDate();
 
   console.log(startOfDay, endOfDay);
   
