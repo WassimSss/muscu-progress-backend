@@ -3,7 +3,9 @@ import { IUser, User } from '../../models/users';
 import { checkData } from '../../modules/checkData';
 import { WorkoutExercise } from '../../models/workoutExercises';
 const moment = require('moment');
+
 const mongoose = require('mongoose');
+
 declare module 'express' {
     
   interface Request {
@@ -105,6 +107,8 @@ const get = async (req: Request, res: Response) => {
   const startOfDay = parsedDate.startOf('day').toDate();
   const endOfDay = parsedDate.endOf('day').toDate();
 
+  console.log(startOfDay, endOfDay);
+  
   const workouts = await User.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(idUser) } },
     { $unwind: '$workouts' },
