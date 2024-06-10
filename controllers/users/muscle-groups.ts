@@ -74,6 +74,7 @@ const get = async (req : Request, res: Response) => {
     return;
   }
 
+  // Get the muscle groups
   const muscleGroups = await MuscleGroup.find();
 
   res.json({

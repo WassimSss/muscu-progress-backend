@@ -68,77 +68,19 @@ const get = async (req: Request, res: Response) => {
   // const startOfDay = moment().utcOffset(0, true).startOf('day').toDate();
   // const endOfDay = moment().utcOffset(0, true).endOf('day').toDate();
 
-  
-  const weights = await User.aggregate([
-    { $match: { _id: new mongoose.Types.ObjectId(idUser) } },
-    { $unwind: '$weights' },
-    // { $match: { 'workouts.date': { $gte: startOfDay, $lt: endOfDay } } },
-    {
-      $lookup: {
-        from: 'workoutexercises', 
-        localField: 'workouts.workout',
-        foreignField: '_id',
-        as: 'workoutDetails'
-      }
-    },
-    { $unwind: '$workoutDetails' },
-    {
-      $lookup: {
-        from: 'musclegroups',
-        localField: 'workoutDetails.muscleGroup',
-        foreignField: '_id',
-        as: 'muscleGroupDetails'
-      }
-    },
-    { $unwind: '$muscleGroupDetails' },
-    {
-      $lookup: {
-        from: 'exercises',
-        localField: 'workoutDetails.name',
-        foreignField: '_id',
-        as: 'exerciseDetails'
-      }
-    },
-    { $unwind: '$exerciseDetails' },
-    { $unwind: '$workoutDetails.sets' }, // Unwind sets to get individual sets
-    {
-      $project: {
-        _id: 0,
-        muscleGroup: '$muscleGroupDetails.name',
-        exerciseName: '$exerciseDetails.name',
-        weight: '$workoutDetails.sets.weight',
-        reps: '$workoutDetails.sets.repetitions',
-        idSet: '$workoutDetails.sets._id', // Include workout ID
-      }
-    }
-  ]);
+  // Get the user weights
+  const user = User.findById(idUser).lean();
 
-  // Structure the results
-  const groupedWorkouts = workouts.reduce((acc, workout) => {
-    const { muscleGroup, exerciseName, weight, reps, idSet } = workout;
-
-    let muscleGroupEntry = acc.find(group => group.muscleGroup === muscleGroup);
-
-    if (!muscleGroupEntry) {
-      muscleGroupEntry = { muscleGroup, exercises: [] };
-      acc.push(muscleGroupEntry);
-    }
-
-    let exerciseEntry = muscleGroupEntry.exercises.find(exercise => exercise.name === exerciseName);
-
-    if (!exerciseEntry) {
-      exerciseEntry = { name: exerciseName, sets: [] };
-      muscleGroupEntry.exercises.push(exerciseEntry);
-    }
-
-    exerciseEntry.sets.push({ weight, reps, idSet });
-
-    return acc;
-  }, []);
+  if(!user){
+    return res.json({
+      result: false,
+      message: 'Utilisateur non trouvé'
+    });
+  }
 
   return res.json({
     result: true,
-    workouts: groupedWorkouts
+    weights: user.weights
   });
 };
 
@@ -184,5 +126,5 @@ const removeWeight = async (req: Request, res: Response) => {
         });
 }
 
-module.exports =  {add, removeWeight} ;
+module.exports =  {add, get, removeWeight} ;
 export {}
