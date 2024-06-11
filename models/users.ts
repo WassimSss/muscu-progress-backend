@@ -44,7 +44,7 @@ const userSchema = new Schema<IUser>({
   weights: [weightReferenceSchema],
   dailyCalories: [{ type: Schema.Types.ObjectId, ref: 'DailyCalorie' }],
   workouts: [workoutReferenceSchema],
-  roles: [{ type: String }]
+  roles: [{ type: String, default: 'ROLE_FREE' }]
 }, { timestamps: true });
 
 const User = model<IUser>('User', userSchema);

@@ -1,9 +1,7 @@
 const {authenticateJWT} = require('../../modules/authenticateJWT');
 import express from 'express';
 const router = express.Router();
-const {add, get} = require('../../controllers/users/exercises');
-
-router.post('/add', authenticateJWT, add);
+const {get} = require('../../controllers/users/exercises');
 
 router.get('/get/:idMuscleGroup', authenticateJWT, get)
 

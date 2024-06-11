@@ -51,13 +51,15 @@ exports.signup = [
 
 			user = new User({
 				email,
-				password: hashedPassword
+				password: hashedPassword,
+				roles: ['ROLE_FREE']
 			});
 
 			// Sauvegarde l'utilisateur dans la base de données
 			await user.save();
 
-			const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+			console.log("user roles : ", user.roles)
+			const token = jwt.sign({ id: user._id, roles: user.roles }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
 			res.status(201).json({ result: true, message: 'Utilisateur enregistré avec succès.', token });
 		} catch (error) {
@@ -92,7 +94,7 @@ exports.signin = [
 				return res.status(400).json({ result: false, message: "L'email ou le mot de passe est incorrect." });
 			}
 
-			const token : string = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY /*, { expiresIn: '1h' }*/);
+			const token : string = jwt.sign({ id: user._id, roles: user.roles }, process.env.JWT_SECRET_KEY /*, { expiresIn: '1h' }*/);
 
 			return res.status(201).json({ result: true, token });
 		} catch (error) {

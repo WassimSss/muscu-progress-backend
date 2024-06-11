@@ -15,6 +15,7 @@ var muscleGroupsRouter = require('./routes/users/muscle-groups');
 var workoutsRouter = require('./routes/users/workouts');
 var weightsRouter = require('./routes/users/weights')
 var apiRouter = require('./routes/api');
+var adminRouter = require('./routes/admin/data-app');
 
 
 var app = express();
@@ -31,6 +32,7 @@ app.use('/users/exercises', exercisesRouter);
 app.use('/users/muscle-groups', muscleGroupsRouter);
 app.use('/users/workouts', workoutsRouter);
 app.use('/users/weights', weightsRouter);
+app.use('/admin/data-app', adminRouter);
 
 
 
