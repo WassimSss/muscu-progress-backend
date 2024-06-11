@@ -104,8 +104,8 @@ const get = async (req: Request, res: Response) => {
     return res.status(400).json({ result: false, message: 'Date invalide' });
   }
 
-  const startOfDay = moment().utcOffset(0, true).startOf('day').toDate();
-  const endOfDay = moment().utcOffset(0, true).endOf('day').toDate();
+  const startOfDay = moment(date).utcOffset(0, true).startOf('day').toDate();
+  const endOfDay = moment(date).utcOffset(0, true).endOf('day').toDate();
 
   console.log(startOfDay, endOfDay);
   

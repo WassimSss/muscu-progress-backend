@@ -80,7 +80,7 @@ const get = async (req: Request, res: Response) => {
 
   return res.json({
     result: true,
-    weights: user.weights
+    weights: user
   });
 };
 
