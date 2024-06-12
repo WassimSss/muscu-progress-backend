@@ -78,7 +78,7 @@ const addMuscleGroup =  async (req : Request, res: Response) => {
   }
 
   // Check if the name is provided
-  const name = req.body.name;
+  const {name} = req.body;
    if(checkData({name: name}, res, "Le nom de l'exercice est requis", false)){
     return;
   }
@@ -87,6 +87,7 @@ const addMuscleGroup =  async (req : Request, res: Response) => {
   const muscleGroupExists = await MuscleGroup.findOne({
     name: name
   });
+  
 
   if(checkData({muscleGroupExists: muscleGroupExists}, res, 'Ce groupe musculaire existe déjà', true)){
     return ;

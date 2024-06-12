@@ -6,6 +6,6 @@ const {addExercise, addMuscleGroup} = require('../../controllers/admin/data-app'
 
 router.post('/exercise/add', authenticateJWT, addExercise)
 
-router.post('/muscle-groups/add', authenticateJWT, authorizeRoles('ROLE_ADMIN'), addMuscleGroup)
+router.post('/muscle-group/add', authenticateJWT, authorizeRoles('ROLE_ADMIN'), addMuscleGroup)
 
 module.exports = router;

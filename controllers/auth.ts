@@ -96,7 +96,7 @@ exports.signin = [
 
 			const token : string = jwt.sign({ id: user._id, roles: user.roles }, process.env.JWT_SECRET_KEY /*, { expiresIn: '1h' }*/);
 
-			return res.status(201).json({ result: true, token });
+			return res.status(201).json({ result: true, token, roles: user.roles });
 		} catch (error) {
 			res.status(500).json({ result: false, message: 'Erreur lors de la connexion' });
 		}
