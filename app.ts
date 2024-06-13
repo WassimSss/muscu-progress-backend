@@ -19,7 +19,21 @@ var adminRouter = require('./routes/admin/data-app');
 
 
 var app = express();
-app.use(cors());
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',');
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins?.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200 // Pour certains navigateurs qui posent problème (IE11, certains SmartTV)
+};
+
+app.use(cors(corsOptions));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
