@@ -67,6 +67,42 @@ const addExercise =  async (req : Request, res: Response) => {
   }
 }
 
+const deleteExercise =  async (req : Request, res: Response) => {
+  const idUser = req.user?.id;
+
+  const user = await User.findById(idUser) as IUser;
+
+  // Check if the user exists 
+  if(checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)){
+    return;
+  }
+
+  const { idExercise } = req.params;
+
+  const exercise = await Exercise.findById(idExercise);
+
+  // Check if the exercise exists
+  if(checkData({exercise: exercise}, res, 'Exercice non trouvé', false)){
+    return;
+  }
+
+  try {
+    await Exercise.deleteOne({_id: idExercise});
+
+    return res.json({
+      result: true,
+      message: 'Exercice supprimé avec succès',
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({
+      result: false,
+      message: 'Erreur lors de la suppression de l\'exercice',
+    });
+
+  }
+}
+
 const addMuscleGroup =  async (req : Request, res: Response) => {
   const idUser = req.user?.id;
 
@@ -119,5 +155,5 @@ const addMuscleGroup =  async (req : Request, res: Response) => {
   
 }
 
-module.exports =  {addExercise, addMuscleGroup} ;
+module.exports =  {addExercise, deleteExercise, addMuscleGroup} ;
 export {}
