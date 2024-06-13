@@ -6,7 +6,7 @@ const {addExercise, deleteExercise, addMuscleGroup, deleteMuscleGroup } = requir
 
 router.post('/exercise/add', authenticateJWT, addExercise)
 
-router.delete('/exercise/delete/:idExercise', authenticateJWT, addExercise)
+router.delete('/exercise/delete/:idExercise', authenticateJWT, deleteExercise)
 
 router.post('/muscle-group/add', authenticateJWT, authorizeRoles('ROLE_ADMIN'), addMuscleGroup)
 

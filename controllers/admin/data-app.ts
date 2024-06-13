@@ -81,6 +81,7 @@ const deleteExercise =  async (req : Request, res: Response) => {
 
   const exercise = await Exercise.findById(idExercise);
 
+  console.log(exercise)
   // Check if the exercise exists
   if(checkData({exercise: exercise}, res, 'Exercice non trouvé', false)){
     return;
@@ -155,5 +156,45 @@ const addMuscleGroup =  async (req : Request, res: Response) => {
   
 }
 
-module.exports =  {addExercise, deleteExercise, addMuscleGroup} ;
+// deleteMuscleGroup
+const deleteMuscleGroup = async (req: Request, res: Response) => {
+  const idUser = req.user?.id;
+
+  const user = await User.findById(idUser) as IUser;
+
+  // Check if the user exists 
+  if (checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)) {
+      return;
+  }
+
+  const { idMuscleGroup } = req.params;
+
+  const muscleGroup = await MuscleGroup.findById(idMuscleGroup);
+
+  // Check if the muscle group exists
+  if (checkData({ muscleGroup: muscleGroup }, res, 'Groupe musculaire non trouvé', false)) {
+      return;
+  }
+
+  try {
+      // Delete exercises associated with the muscle group
+      await Exercise.deleteMany({ muscleGroupId: idMuscleGroup });
+
+      // Delete the muscle group
+      await MuscleGroup.deleteOne({ _id: idMuscleGroup });
+
+      return res.json({
+          result: true,
+          message: 'Groupe musculaire et exercices associés supprimés avec succès',
+      });
+  } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+          result: false,
+          message: 'Erreur lors de la suppression du groupe musculaire',
+      });
+  }
+}
+
+module.exports =  {addExercise, deleteExercise, addMuscleGroup, deleteMuscleGroup} ;
 export {}
