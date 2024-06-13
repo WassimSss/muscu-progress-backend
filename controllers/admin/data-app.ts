@@ -33,7 +33,8 @@ const addExercise =  async (req : Request, res: Response) => {
   }
   
   const exerciseExists = await Exercise.findOne({
-    name: name
+    name: name,
+    muscleGroup: idMuscleGroup
   });
 
   // // Check if the exercise already exists
@@ -178,7 +179,7 @@ const deleteMuscleGroup = async (req: Request, res: Response) => {
 
   try {
       // Delete exercises associated with the muscle group
-      await Exercise.deleteMany({ muscleGroupId: idMuscleGroup });
+      await Exercise.deleteMany({ muscleGroup: idMuscleGroup });
 
       // Delete the muscle group
       await MuscleGroup.deleteOne({ _id: idMuscleGroup });
