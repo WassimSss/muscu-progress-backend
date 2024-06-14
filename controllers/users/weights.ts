@@ -111,30 +111,20 @@ const removeWeight = async (req: Request, res: Response) => {
   if (checkData({ idWeight: idWeight }, res, "L'id du poids est requis", false)) {
     return;
   }
-
-  const weight = await User.findOne({ _id: idUser, 'weights._id': idWeight });
-
-  if (!weight) {
-    return res.json({
-      result: false,
-      message: 'Poids non trouvée'
-    });
-  }
-
-
-  const deletedSet = await User.updateOne(
-    { user: idUser, 'weights._id': idWeight },
+  
+  const deleteWeight = await User.updateOne(
+    { _id: idUser, 'weights._id': idWeight },
     { $pull: { weights: { _id: idWeight } } }
   );
 
-  if (deletedSet.modifiedCount === 0) {
+  if (deleteWeight.modifiedCount === 0) {
     return res.status(404).json({
       result: false,
       message: 'Poids non trouvé ou déjà supprimé'
     });
   }
 
-  res.json({
+  return res.json({
           result: true,
           message: 'Poids supprimée avec succès'
         });
