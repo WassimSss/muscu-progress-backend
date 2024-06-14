@@ -21,6 +21,7 @@ interface IUser extends Document {
   workouts: WorkoutReference[];
   weights: WeightReference[];
   roles: string[];
+  program?: 'maintenance' | 'gain_mass' | 'weight_loss' | 'choose_program';
 }
 
 const weightReferenceSchema = new Schema<WeightReference>({
@@ -44,7 +45,12 @@ const userSchema = new Schema<IUser>({
   weights: [weightReferenceSchema],
   dailyCalories: [{ type: Schema.Types.ObjectId, ref: 'DailyCalorie' }],
   workouts: [workoutReferenceSchema],
-  roles: [{ type: String, default: 'ROLE_FREE' }]
+  roles: [{ type: String, default: 'ROLE_FREE' }],
+  program: { 
+    type: String, 
+    enum: ['maintenance', 'gain_mass', 'weight_loss', 'choose_program'], 
+    default: 'choose_program' 
+} // Adding the program field with default value
 }, { timestamps: true });
 
 const User = model<IUser>('User', userSchema);
