@@ -20,7 +20,7 @@ const add =  async (req : Request, res: Response) => {
     return;
   }
 
-  const {idMuscleGroup, idExercise, weight, repetitions} = req.body;
+  const {idMuscleGroup, idExercise, weight, repetitions, type} = req.body;
 
   // Check if the idMuscleGroup is provided
   if(checkData({idMuscleGroup: idMuscleGroup}, res, "L'id du groupe musculaire est requis", false)){
@@ -54,7 +54,8 @@ const add =  async (req : Request, res: Response) => {
 
     workout.sets.push({
       weight: weight,
-      repetitions: repetitions
+      repetitions: repetitions,
+      type: type
     });
 
     await workout.save();
@@ -73,7 +74,8 @@ const add =  async (req : Request, res: Response) => {
       name: idExercise,
       sets: [{
         weight: weight,
-        repetitions: repetitions
+        repetitions: repetitions,
+        type: type
       }]
     });
 
@@ -148,6 +150,7 @@ const get = async (req: Request, res: Response) => {
         exerciseName: '$exerciseDetails.name',
         weight: '$workoutDetails.sets.weight',
         reps: '$workoutDetails.sets.repetitions',
+        type: '$workoutDetails.sets.type',
         idSet: '$workoutDetails.sets._id', // Include workout ID
       }
     }
@@ -155,7 +158,7 @@ const get = async (req: Request, res: Response) => {
 
   // Structure the results
   const groupedWorkouts = workouts.reduce((acc, workout) => {
-    const { muscleGroup, exerciseName, weight, reps, idSet } = workout;
+    const { muscleGroup, exerciseName, weight, reps, type, idSet } = workout;
 
     let muscleGroupEntry = acc.find(group => group.muscleGroup === muscleGroup);
 
@@ -171,7 +174,7 @@ const get = async (req: Request, res: Response) => {
       muscleGroupEntry.exercises.push(exerciseEntry);
     }
 
-    exerciseEntry.sets.push({ weight, reps, idSet });
+    exerciseEntry.sets.push({ weight, reps, type, idSet });
 
     return acc;
   }, []);
