@@ -27,11 +27,33 @@ const add =  async (req : Request, res: Response) => {
   }
 
   const today = moment().utcOffset(0, true);
+  const startOfDay = moment().utcOffset(0, true).startOf('day').toDate();
+  const endOfDay = moment().utcOffset(0, true).endOf('day').toDate();
+
   const { weight } = req.body;
+  console.log("typeof weight : ", typeof weight)
+  console.log("weight : ", weight);
+  
 
   // // Check if the weight is provided
   if(checkData({weight: weight}, res, "Le poids est requis", false)){
     return;
+  }
+
+
+  // if weightOfToday is found, update it with weight
+  const existingWeight = user.weights.find((weight: any) => {
+    const dayDiff = moment(weight.date).diff(today, 'days') === 0
+    return dayDiff;
+  })
+
+  if(existingWeight){
+    existingWeight.weight = weight;
+    await user.save();
+    return res.json({
+      result: true,
+      message: 'Poids mis à jour avec succès',
+    });
   }
 
   // Add the weight to the user
@@ -60,16 +82,8 @@ const get = async (req: Request, res: Response) => {
     return res.status(404).json({ result: false, message: 'Utilisateur non trouvé' });
   }
 
-  // const parsedDate = moment(date, 'YYYY-MM-DD').utcOffset(0, true);
-  // if (!parsedDate.isValid()) {
-  //   return res.status(400).json({ result: false, message: 'Date invalide' });
-  // }
-
-  // const startOfDay = moment().utcOffset(0, true).startOf('day').toDate();
-  // const endOfDay = moment().utcOffset(0, true).endOf('day').toDate();
-
   // Get the user weights
-  const user = User.findById(idUser).lean();
+  const user = await User.findById(idUser).lean();
 
   if(!user){
     return res.json({
@@ -78,9 +92,9 @@ const get = async (req: Request, res: Response) => {
     });
   }
 
-  return res.json({
+  res.json({
     result: true,
-    weights: user
+    weights: user.weights
   });
 };
 
