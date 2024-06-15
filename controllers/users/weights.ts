@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { IUser, User } from '../../models/users';
 import { checkData } from '../../modules/checkData';
-import { checkAdmin } from '../../modules/checkAdmin';
 import { Weight } from '../../models/weights';
 import moment from 'moment';
 
@@ -17,10 +16,6 @@ const add =  async (req : Request, res: Response) => {
   const idUser = req.user?.id;
 
   const user = await User.findById(idUser) as IUser;
-  // Check if the user is an admin
-  if(checkAdmin(user, res)){
-    return;
-  }
   // Check if the user exists 
   if(checkData({ idUser: idUser }, res, 'Utilisateur non trouvé', false)){
     return;
