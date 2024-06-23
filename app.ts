@@ -27,14 +27,21 @@ const corsOptions = {
     if (!origin || allowedOrigins?.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      console.log(`Origin ${origin} not allowed by CORS`); // Ajoutez ceci pour déboguer
+      console.log(`Origin ${origin} not allowed by CORS`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  optionsSuccessStatus: 200 // Pour certains navigateurs qui posent problème (IE11, certains SmartTV)
+  optionsSuccessStatus: 200 
 };
 
 app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
 
 app.use(logger('dev'));
 app.use(express.json());
