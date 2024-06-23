@@ -6,19 +6,15 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 
-
-
-// var indexRouter = require('./routes/index');
 var indexRouter = require('./routes/index');
 var exercisesRouter = require('./routes/users/exercises');
 var muscleGroupsRouter = require('./routes/users/muscle-groups');
 var workoutsRouter = require('./routes/users/workouts');
-var weightsRouter = require('./routes/users/weights')
+var weightsRouter = require('./routes/users/weights');
 var caloriesRouter = require('./routes/users/calories');
 var programRouter = require('./routes/users/programs');
 var apiRouter = require('./routes/api');
 var adminRouter = require('./routes/admin/data-app');
-
 
 var app = express();
 
@@ -29,6 +25,7 @@ const corsOptions = {
     if (!origin || allowedOrigins?.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.log(`Origin ${origin} not allowed by CORS`); // Ajoutez ceci pour déboguer
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -53,8 +50,4 @@ app.use('/users/calories', caloriesRouter);
 app.use('/users/programs', programRouter);
 app.use('/admin/data-app', adminRouter);
 
-
-
 module.exports = app;
-
-

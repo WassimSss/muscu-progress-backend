@@ -111,6 +111,8 @@ const get = async (req: Request, res: Response) => {
 
   console.log(startOfDay, endOfDay);
   
+  // const workouts = await WorkoutExercise.find({ user: idUser, date: { $gte: startOfDay, $lt: endOfDay } });
+
   const workouts = await User.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(idUser) } },
     { $unwind: '$workouts' },
